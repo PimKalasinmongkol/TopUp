@@ -84,6 +84,8 @@ function App() {
           <button onClick={() => handleButtonClick(100)}>100</button>
           <button onClick={() => handleButtonClick(150)}>150</button>
           <button onClick={() => handleButtonClick(200)}>200</button>
+          <button onClick={() => handleButtonClick(250)}>250</button>
+          <button onClick={() => handleButtonClick(300)}>300</button>
         </div>
         <div className="btnYes">
           <button onClick={showSwal}>ยืนยัน</button>
