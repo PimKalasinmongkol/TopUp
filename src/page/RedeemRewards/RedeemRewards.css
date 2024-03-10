@@ -66,6 +66,7 @@
     background-color: transparent;
     border: none;
     cursor: pointer;
+    font-family: 'Kanit', sans-serif;
   }
   
   .decrease {
