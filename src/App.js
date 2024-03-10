@@ -1,6 +1,4 @@
-import Swal from "sweetalert2";
 import "./App.css";
-import { useState } from "react";
 import Sidebar from "./Sidebar/Sidebar";
 import Register from "./page/Register/Register";
 import Profile from "./page/profile/profile"
