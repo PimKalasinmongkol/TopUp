@@ -12,7 +12,7 @@ function TopUp() {
   };
 
   const showSwal = () => {
-    if (!money) {
+    if (!money || money=="0") {
       Swal.fire({
         icon: "error",
         title: "กรุณากรอกข้อมูล",
