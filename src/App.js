@@ -42,7 +42,7 @@ function App() {
     <div className="TopUpPage">
       <h1>บริการเติมเงิน</h1>
       <div className="CashNow">
-        <p>200</p>
+        <p>{money}</p>
       </div>
       <div className="bigBoxInp">
         <div className="dataUser">
