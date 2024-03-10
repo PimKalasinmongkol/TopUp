@@ -71,7 +71,7 @@ function App() {
         <div className="BoxInput_Cash">
           <p>กรอกจำนวนเงินที่ต้องการ(บาท)</p>
           <input
-            type="text"
+            type="number"
             className="inpCash"
             value={money}
             placeholder="กรุณาใส่จำนวนเงิน"
