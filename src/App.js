@@ -42,6 +42,7 @@ function App() {
     <div className="TopUpPage">
       <h1>บริการเติมเงิน</h1>
       <div className="CashNow">
+        <p style={{fontSize:"medium",color:"#6F6F6F"}}>ยอดเงินคงเหลือ</p>
         <p>{money}</p>
       </div>
       <div className="bigBoxInp">
