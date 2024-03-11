@@ -5,40 +5,33 @@ import Swal from 'sweetalert2'
 
 function Profile() {
 
-    const [dataCustomer, setDataCustomer] = useState({username: '', studentID: '', firstname: '', lastname:'', username:''});
+    const [dataCustomer, setDataCustomer] = useState({studentID: '', firstname: '', lastname:'', username:''});
 
     useEffect(()=>{
-        handleRetrieveDataCustomer()
-    },[])
-
-    const handleRetrieveDataCustomer = async()=>{
-        await axios.post('http://localhost:3001/retrieveDataNisitWithUUID')
-        .then((response)=>{
-            if(response.status == 200 && response.data != 'Not member, please sign up first'){
-                console.log(response.data)
-                setDataCustomer(response.data);
-            }else{
-                if(response.status == 200 && response.data == 'Not member, please sign up first'){
-                    Swal.fire({
-                        icon: "error",
-                        title: "กรุณาสมัครสมาชิกก่อน",
-                        text: response.data,
-                      });
-                }else{
+        (async() => {
+            await axios.post('http://localhost:3001/retrieveDataNisitWithUUID')
+            .then((response)=>{
+                if(response.status === 200 && response.data !== 'Not member, please sign up first'){
                     console.log(response.data)
+                    setDataCustomer(response.data);
+                }else{
+                    console.log("จีจี้")
                 }
-            }
-        })
-    }
+            })
+        })()
+    },[])
 
 
     return (
         <div className="profile-container">
             <h1 className="profile-heading">ข้อมูลสมาชิก</h1>
             <div className="info-box">
+                {
+                    
+                }
                 <div className="info-item">
                     <label htmlFor="idCard">รหัสบัตร :</label>
-                    <input type="text" id="idCard"  className='BoxData' readOnly />
+                    <input type="text" id="idCard"  value={dataCustomer.cardID} className='BoxData' readOnly />
                 </div>
                 <div className="info-item">
                     <label htmlFor="studentId">รหัสนิสิต :</label>

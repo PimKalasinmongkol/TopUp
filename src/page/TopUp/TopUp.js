@@ -1,42 +1,45 @@
-import Swal from "sweetalert2";
 import "./TopUp.css";
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import Swal from "sweetalert2"; // เพิ่มการ import สำหรับ SweetAlert
 
 function TopUp() {
   const [money, setMoney] = useState("");
-  const [name, setName] = useState("");
   const [cardCode, setCardCode] = useState("");
-  const [moneysimple, setMoneysimple] = useState(""); // New state for moneysimple
+  const [moneysimple, setMoneysimple] = useState("");
+  const [dataCustomer, setDataCustomer] = useState({cardID:'', studentID: '', firstname: '', lastname:'', username:'',cash:''});
 
   const handleButtonClick = (amount) => {
     setMoney(amount.toString());
   };
 
-  useEffect(() => {
-    axios.get(`https://jsonplaceholder.typicode.com/users`)
-      .then(res => {
-        const persons = res.data;
-        // Assuming you have a single user and you extract data like this
-        setName(persons[0].name);
-        setCardCode(persons[0].cardcode);
-        setMoneysimple(persons[0].moneysimple);
-      })
-  },[]);
+  useEffect(()=>{
+    (async() => {
+        await axios.post('http://localhost:3001/retrieveDataNisitWithUUID')
+        .then((response)=>{
+            if(response.status === 200 && response.data !== 'Not member, please sign up first'){
+                console.log(response.data)
+                setDataCustomer(response.data);
+            }else{
+                console.log("")
+            }
+        })
+    })()
+},[])
 
-  const handleSubmit = (event) => {
+  /* const handleSubmit = (event) => {
     event.preventDefault();
 
     const cardID = {
       name: name
     };
 
-    axios.post(`https://jsonplaceholder.typicode.com/users`, { cardID })
+    axios.get(`https://jsonplaceholder.typicode.com/users`, { cardID })
       .then(res => {
         console.log(res);
         console.log(res.data);
       })
-  };
+  }; */
 
   const showSwal = () => {
     if (!money || money==="0") {
@@ -51,16 +54,27 @@ function TopUp() {
     Swal.fire({
       title: "บริการเติมเงิน",
       icon: "question",
-      html: `คุณต้องการเติมเงิน ${money} บาท<br><br>ชื่อ-นามสกุล: ${name}<br>รหัสบัตรของผู้เติม: ${cardCode}<br>ยอดเงินคงเหลือ: ${moneysimple}`,
+      html: `คุณต้องการเติมเงิน ${money} บาท<br><br>ชื่อ-นามสกุล: ${dataCustomer.firstname} ${dataCustomer.lastname} <br>รหัสบัตรของผู้เติม: ${cardCode}<br>ยอดเงินคงเหลือ: ${moneysimple}`,
       showCancelButton: true,
       confirmButtonText: "ตกลง",
       cancelButtonText: "ยกเลิก",
     }).then((result) => {
       if (result.isConfirmed) {
-        // Perform the actual top-up action
-        axios.post(`https://jsonplaceholder.typicode.com/topup`, { money: parseInt(money) + parseInt(moneysimple), cardCode })
-          .then(res => {
-            Swal.fire("เติมเงินสำเร็จ", `${money} บาท`, "success");
+        axios.post(`http://localhost:3001/topUpCashCard`, { cash: parseInt(money)})
+          .then((response)=>{
+            if(response.data){
+              if(response.data == "กรุณาแนบบัตร" && response.data == "ไม่พบเครื่องอ่านบัตร" && response.data == "Not member, please sign up first"){
+                Swal.fire(response.data, "", "error");
+              }
+              else{
+                if(response.status == 200){
+                  Swal.fire({
+                    title: "เติมเงินสำเร็จ",
+                    icon: "success"
+                });
+                }
+              }
+            }
           })
           .catch(err => {
             Swal.fire("มีบางอย่างผิดพลาด", "", "error");
@@ -76,7 +90,7 @@ function TopUp() {
       <h1>บริการเติมเงิน</h1>
       <div className="CashNow">
         <p style={{fontSize:"medium",color:"#6F6F6F"}}>ยอดเงินคงเหลือ</p>
-        <p>{moneysimple}</p>
+        <p>{dataCustomer.cash}</p>
       </div>
       <div className="bigBoxInp">
         <div className="dataUser">
@@ -85,7 +99,7 @@ function TopUp() {
             <input
               className="inpName"
               type="text"
-              value={name}
+              value={`${dataCustomer.firstname} ${dataCustomer.lastname}`}
               placeholder="ชื่อ-นามสกุล"
               readOnly
             />
@@ -95,7 +109,7 @@ function TopUp() {
             <input
               className="inpCardCode"
               type="text"
-              value={cardCode}
+              value={dataCustomer.cardID}
               placeholder="รหัสบัตรของผู้เติม"
               readOnly
             />
