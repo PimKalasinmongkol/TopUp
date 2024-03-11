@@ -2,6 +2,7 @@ import Swal from 'sweetalert2'
 import React, { useState, useEffect } from 'react';
 import './Register.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 
 function Register() {
@@ -9,11 +10,12 @@ function Register() {
     idCard: '',
     studentId: '',
     studentName: '',
-    studentEmail: ''
+    username: ''
   });
 
+  const [isSuccess, setSuccess] = useState(false)
+
   useEffect(() => {
-  
     console.log('Form data updated:', formData);
   }, [formData]);
 
@@ -22,8 +24,63 @@ function Register() {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleSignUp = async()=>{
+    /*await fetch('http://localhost:3001/writeJsonFileToFolderDatabaseInFTP',{
+      method: 'POST',
+      headers: {'Content-type':'application/json'},
+      body: JSON.stringify({
+        studentID: formData.studentId,
+        username: formData.username,
+        firstname: 'firstname',
+        lastname: 'lastname',
+        cash: 0,
+        point: 0
+      })
+    }).then((response) => {
+      if(response.data == "Write successful"){
+        console.log(response.data);
+        return true;
+      }else{
+        console.log(response.data);
+        if(response.data != undefined){
+          Swal.fire({
+            icon: "error",
+            title: "สมัครสมาชิกไม่สำเร็จ",
+            text: response.data,
+          });
+        }
+        
+        return;
+      }
+    })*/
+    await axios.post('http://localhost:3001/writeJsonFileToFolderDatabaseInFTP',{
+      studentID: formData.studentId,
+      username: formData.username,
+      firstname: 'firstname',
+      lastname: 'lastname',
+      cash: 0,
+      point: 0
+    }).then((response)=>{
+      if(response.data == "Write successful"){
+        console.log(response.data);
+        return true;
+      }else{
+        if(response.data != undefined){
+          Swal.fire({
+            icon: "error",
+            title: "สมัครสมาชิกไม่สำเร็จ",
+            text: response.data,
+          });
+        }
+        
+        return false;
+      }
+    })
+  }
+
+  
   const handleSave = () => {
-    if ( !formData.studentId || !formData.studentName || !formData.studentEmail) {
+    if ( !formData.studentId || !formData.studentName || !formData.username) {
         Swal.fire({
             icon: "error",
             title: "สมัครสมาชิกไม่สำเร็จ",
@@ -31,12 +88,16 @@ function Register() {
         });
         return;
     }
-
-    console.log('Data saved:', formData);
-    Swal.fire({
-        title: "สมัครสมาชิกสำเร็จ",
-        icon: "success"
-    });
+    let signUpSuccess = handleSignUp()
+    if(signUpSuccess){
+      console.log('Data saved:', formData);
+      Swal.fire({
+          title: "สมัครสมาชิกสำเร็จ",
+          icon: "success"
+      });
+      setSuccess(true);
+    }
+    
 };
 
   return (
@@ -68,18 +129,17 @@ function Register() {
                   
                 </div>
                 <div className='boxxxx'>
-                  <label htmlFor="studentEmail" style={{ fontSize: '13px' }}>Email</label>
+                  <label htmlFor="username" style={{ fontSize: '13px' }}>Username</label>
                   
-                    <input className='BoxName' type="text" id="studentEmail" name="studentEmail" value={formData.studentEmail} onChange={handleInputChange} />
+                    <input className='BoxName' type="text" id="username" name="username" value={formData.username} onChange={handleInputChange} />
                   
                 </div>
               </div>
           </div>
         </div>
         <div className='ButtonSave'>
-            <Link to={"/Profile"}>
           <button onClick={handleSave}>ยืนยัน</button>
-          </Link>
+            
         </div>
       </div>
       {/* <Profile></Profile> */}
